@@ -43,7 +43,7 @@ function Login() {
           Don&apos;t have any account?&nbsp;
           <Link
             to="/signup"
-            className="font-medium text-primary transition-all duration-200 hover:underline"
+            className="text-[#673de6] font-medium text-primary transition-all duration-200 hover:underline"
           >
             Sign Up
           </Link>

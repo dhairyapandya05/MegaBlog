@@ -33,32 +33,39 @@ export default function Post() {
   };
 
   return post ? (
-    <div className="py-8">
+    <div className="py-10 bg-gradient-to-b from-gray-100 to-gray-300 min-h-screen">
       <Container>
-        <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
-          <img
-            src={appwriteService.getFilePreview(post.featuredImage)}
-            alt={post.title}
-            className="rounded-xl"
-          />
-
-          {isAuthor && (
-            <div className="absolute right-6 top-6">
-              <Link to={`/edit-post/${post.$id}`}>
-                <Button bgColor="bg-green-500" className="mr-3">
-                  Edit
+        <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-xl p-8 relative">
+          <div className="flex flex-col items-center mb-8">
+            <img
+              src={appwriteService.getFilePreview(post.featuredImage)}
+              alt={post.title}
+              className="rounded-2xl w-full max-h-[400px] object-cover shadow-md border mb-6"
+            />
+            {isAuthor && (
+              <div className="absolute right-8 top-8 flex gap-2">
+                <Link to={`/edit-post/${post.$id}`}>
+                  <Button bgColor="bg-green-500" className="mr-2 shadow">
+                    Edit
+                  </Button>
+                </Link>
+                <Button bgColor="bg-red-500" onClick={deletePost} className="shadow">
+                  Delete
                 </Button>
-              </Link>
-              <Button bgColor="bg-red-500" onClick={deletePost}>
-                Delete
-              </Button>
-            </div>
-          )}
+              </div>
+            )}
+          </div>
+          <div className="mb-6 text-center">
+            <h1 className="text-4xl font-extrabold text-gray-900 mb-2 break-words leading-tight">
+              {post.title}
+            </h1>
+            {/* Optionally show author and date if available */}
+            {/* <p className="text-sm text-gray-500">By {post.author} • {formatDate(post.date)}</p> */}
+          </div>
+          <div className="prose prose-lg max-w-none text-gray-800 mx-auto bg-white/80 p-4 rounded-xl">
+            {parse(post.content)}
+          </div>
         </div>
-        <div className="w-full mb-6">
-          <h1 className="text-2xl font-bold">{post.title}</h1>
-        </div>
-        <div className="browser-css">{parse(post.content)}</div>
       </Container>
     </div>
   ) : null;

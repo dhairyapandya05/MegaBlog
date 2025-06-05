@@ -25,14 +25,12 @@ function App() {
       });
   }, []);
   return !loading ? (
-    <div className="flex-wrap content-between bg-gray-400 min-h-screen flex ">
-      <div className="w-full block">
-        <Header />
-        <main>
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <Header />
+      <main className="flex-1">
+        <Outlet />
+      </main>
+      <Footer />
     </div>
   ) : null;
 }
