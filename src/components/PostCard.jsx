@@ -2,9 +2,9 @@ import React from "react";
 import appwriteService from "../appwrite/config";
 import {Link} from "react-router-dom";
 
-function PostCard({$id, title, featuredImage}) {
+function PostCard({id, title, featuredImage}) {
   return (
-    <Link to={`/post/${$id}`}>
+    <Link to={`/post/${id}`}>
       <div className="w-full bg-white rounded-xl p-4 shadow-md">
         <div className="w-full justify-center mb-4">
           <img

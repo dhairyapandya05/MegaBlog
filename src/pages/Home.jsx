@@ -1,19 +1,19 @@
 import React, {useEffect, useState} from "react";
-import appwriteService from "../appwrite/config";
+import firebaseService from "../appwrite/config";
 import {Container, PostCard} from "../components";
 
 function Home() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    appwriteService.getPosts().then((posts) => {
+    firebaseService.getPosts().then((posts) => {
       if (posts) {
-        setPosts(posts.documents);
+        setPosts(posts);
       }
     });
   }, []);
 
-  if (posts.length === 0) {
+  if (posts?.length === 0) {
     return (
       <div className="w-full py-8 mt-4 text-center">
         <Container>
@@ -32,8 +32,8 @@ function Home() {
     <div className="w-full py-8">
       <Container>
         <div className="flex flex-wrap">
-          {posts.map((post) => (
-            <div key={post.$id} className="p-2 w-1/4">
+          {posts?.map((post) => (
+            <div key={post.id} className="p-2 w-1/4">
               <PostCard {...post} />
             </div>
           ))}

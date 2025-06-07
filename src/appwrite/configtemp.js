@@ -22,16 +22,20 @@ import firebaseConfig from "../firebase/firebase";
 
 // Initialize Firebase app and services
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
+db;
+storage;
 
 // Constants
 const POSTS_COLLECTION = "posts";
 
 export class Service {
-  constructor() {
-    this.db = this.storage = getStorage(app);
-  }
+
+
+    constructor(){
+        this.db = getFirestore(app);
+        this.storage = getStorage(app);
+    }
+
 
   async createPost({title, slug, content, featuredImage, status, userId}) {
     try {
@@ -99,9 +103,7 @@ export class Service {
         where("status", "==", status)
       );
       const querySnapshot = await getDocs(postsQuery);
-      let res = querySnapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}));
-      console.log("Res: ", res);
-      return res;
+      return querySnapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}));
     } catch (error) {
       console.error("FirebaseService :: getPosts :: error", error);
       return [];
@@ -112,7 +114,7 @@ export class Service {
 
   async uploadFile(file, path = "uploads") {
     try {
-      const fileRef = ref(storage, `${path}/${Date.now()}_${file.name}`);
+      const fileRef = ref(storage, ${path}/${Date.now()}_${file.name});
       const snapshot = await uploadBytes(fileRef, file);
       const downloadURL = await getDownloadURL(snapshot.ref);
       return {

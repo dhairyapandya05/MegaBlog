@@ -11,9 +11,13 @@ import firebaseConfig from "../firebase/firebase"; // This should export firebas
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+auth;
 
 export class AuthService {
+  constructor() {
+    this.auth = getAuth(app);
+  }
+
   async createAccount({email, password, name}) {
     try {
       const userCredential = await createUserWithEmailAndPassword(

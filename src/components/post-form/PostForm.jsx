@@ -1,7 +1,7 @@
 import React, {useCallback} from "react";
 import {useForm} from "react-hook-form";
 import {Button, Input, RTE, Select} from "../index";
-import appwriteService from "../../appwrite/config.js";
+import firebaseService from "../../appwrite/config.js";
 import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 
@@ -21,37 +21,46 @@ export default function PostForm({post}) {
   const userData = useSelector((state) => state.auth.userData);
 
   const submit = async (data) => {
+    console.log("[DEBUG - PostForm Submit] Submit function triggered.");
     if (post) {
-      const file = data.image[0]
-        ? await appwriteService.uploadFile(data.image[0])
-        : null;
-
-      if (file) {
-        appwriteService.deleteFile(post.featuredImage);
+      let fileUrl = post.featuredImage;
+      if (data.image && data.image[0]) {
+        const file = await firebaseService.uploadFile(data.image[0]);
+        if (file) {
+          await firebaseService.deleteFile(post.featuredImage);
+          fileUrl = file.url;
+        }
       }
-
-      const dbPost = await appwriteService.updatePost(post.$id, {
+      const dbPost = await firebaseService.updatePost(post.slug || post.id, {
         ...data,
-        featuredImage: file ? file.$id : undefined,
+        featuredImage: fileUrl,
       });
-
       if (dbPost) {
-        navigate(`/post/${dbPost.$id}`);
+        console.log("[DEBUG - PostForm Submit] Post updated successfully:", dbPost);
+        navigate(`/post/${dbPost.slug || dbPost.id}`);
       }
     } else {
-      const file = await appwriteService.uploadFile(data.image[0]);
-
-      if (file) {
-        const fileId = file.$id;
-        data.featuredImage = fileId;
-        const dbPost = await appwriteService.createPost({
+      let fileUrl = "";
+      if (data.image && data.image[0]) {
+        const file = await firebaseService.uploadFile(data.image[0]);
+        if (file) fileUrl = file.url;
+      }
+      console.log("[DEBUG - PostForm Submit] Creating new post with data:", { ...data, featuredImage: fileUrl, userId: userData?.uid || userData?.$id, slug: data.slug });
+      try {
+        const dbPost = await firebaseService.createPost({
           ...data,
-          userId: userData.$id,
+          featuredImage: fileUrl,
+          userId: userData?.uid || userData?.$id,
+          slug: data.slug,
         });
-
         if (dbPost) {
-          navigate(`/post/${dbPost.$id}`);
+          console.log("[DEBUG - PostForm Submit] New post created successfully:", dbPost);
+          navigate(`/post/${dbPost.slug || dbPost.id}`);
+        } else {
+          console.log("[DEBUG - PostForm Submit] createPost returned null or undefined.");
         }
+      } catch (error) {
+        console.error("[ERROR - PostForm Submit] Error creating post:", error);
       }
     }
   };
@@ -112,10 +121,10 @@ export default function PostForm({post}) {
           accept="image/png, image/jpg, image/jpeg, image/gif"
           {...register("image", {required: !post})}
         />
-        {post && (
+        {post && post.featuredImage && (
           <div className="w-full mb-4">
             <img
-              src={appwriteService.getFilePreview(post.featuredImage)}
+              src={firebaseService.getFilePreview(post.featuredImage)}
               alt={post.title}
               className="rounded-lg"
             />
