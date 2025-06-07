@@ -111,14 +111,16 @@ export class Service {
   // 🔽 File upload methods using Firebase Storage
 
   async uploadFile(file, path = "uploads") {
+    console.log("We are here", file, path);
     try {
-      const fileRef = ref(storage, `${path}/${Date.now()}_${file.name}`);
+      const fileRef = ref(storage, `${file.name}`);
       const snapshot = await uploadBytes(fileRef, file);
       const downloadURL = await getDownloadURL(snapshot.ref);
-      return {
+      let response = {
         url: downloadURL,
         path: snapshot.ref.fullPath,
       };
+      return response;
     } catch (error) {
       console.error("FirebaseService :: uploadFile :: error", error);
       return null;

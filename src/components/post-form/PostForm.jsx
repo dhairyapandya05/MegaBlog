@@ -6,6 +6,7 @@ import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 
 export default function PostForm({post}) {
+  console.log("POST: ", post);
   const {register, handleSubmit, watch, setValue, control, getValues} = useForm(
     {
       defaultValues: {
@@ -23,6 +24,7 @@ export default function PostForm({post}) {
   const submit = async (data) => {
     console.log("[DEBUG - PostForm Submit] Submit function triggered.");
     if (post) {
+      console.log("post executed");
       let fileUrl = post.featuredImage;
       if (data.image && data.image[0]) {
         const file = await firebaseService.uploadFile(data.image[0]);
@@ -36,16 +38,27 @@ export default function PostForm({post}) {
         featuredImage: fileUrl,
       });
       if (dbPost) {
-        console.log("[DEBUG - PostForm Submit] Post updated successfully:", dbPost);
+        console.log(
+          "[DEBUG - PostForm Submit] Post updated successfully:",
+          dbPost
+        );
         navigate(`/post/${dbPost.slug || dbPost.id}`);
       }
     } else {
+      console.log("patch executed");
+
       let fileUrl = "";
       if (data.image && data.image[0]) {
         const file = await firebaseService.uploadFile(data.image[0]);
         if (file) fileUrl = file.url;
       }
-      console.log("[DEBUG - PostForm Submit] Creating new post with data:", { ...data, featuredImage: fileUrl, userId: userData?.uid || userData?.$id, slug: data.slug });
+      console.log("[DEBUG - PostForm Submit] Creating new post with data:", {
+        ...data,
+        featuredImage: fileUrl,
+        userId: userData?.uid || userData?.$id,
+        slug: data.slug,
+      });
+
       try {
         const dbPost = await firebaseService.createPost({
           ...data,
@@ -54,10 +67,15 @@ export default function PostForm({post}) {
           slug: data.slug,
         });
         if (dbPost) {
-          console.log("[DEBUG - PostForm Submit] New post created successfully:", dbPost);
+          console.log(
+            "[DEBUG - PostForm Submit] New post created successfully:",
+            dbPost
+          );
           navigate(`/post/${dbPost.slug || dbPost.id}`);
         } else {
-          console.log("[DEBUG - PostForm Submit] createPost returned null or undefined.");
+          console.log(
+            "[DEBUG - PostForm Submit] createPost returned null or undefined."
+          );
         }
       } catch (error) {
         console.error("[ERROR - PostForm Submit] Error creating post:", error);
