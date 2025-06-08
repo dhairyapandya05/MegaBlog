@@ -41,6 +41,7 @@ export class Service {
     status,
     userId,
     estimatedtime,
+    previewText,
   }) {
     try {
       const postRef = doc(db, POSTS_COLLECTION, slug);
@@ -52,6 +53,7 @@ export class Service {
         userId,
         createdAt: new Date(),
         estimatedtime,
+        previewText,
       });
       return {slug};
     } catch (error) {
@@ -61,7 +63,7 @@ export class Service {
 
   async updatePost(
     slug,
-    {title, content, featuredImage, status, estimatedtime}
+    {title, content, featuredImage, status, estimatedtime, previewText}
   ) {
     try {
       const postRef = doc(db, POSTS_COLLECTION, slug);
@@ -72,6 +74,7 @@ export class Service {
         status,
         updatedAt: new Date(),
         estimatedtime,
+        previewText,
       });
       return {slug};
     } catch (error) {

@@ -4,6 +4,7 @@ import {Button, Input, RTE, Select} from "../index";
 import firebaseService from "../../appwrite/config.js";
 import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
+import blogFn from "../../blog/blogFunctions.js";
 
 export default function PostForm({post}) {
   console.log("POST: ", post);
@@ -22,31 +23,6 @@ export default function PostForm({post}) {
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
 
-  function estimateReadTime(htmlContent) {
-    // Create a temporary element to parse HTML
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = htmlContent;
-
-    // Remove non-text content like <pre>, <code>, and any script/style tags
-    const tagsToRemove = tempDiv.querySelectorAll("pre, code, script, style");
-    tagsToRemove.forEach((tag) => tag.remove());
-
-    // Extract readable text
-    const text = tempDiv.textContent || "";
-
-    // Clean and count words
-    const words = text.trim().split(/\s+/).filter(Boolean);
-    const wordCount = words.length;
-
-    // Reading speed (words per minute)
-    const wordsPerMinute = 200;
-
-    // Estimate time in minutes (at least 1)
-    const minutes = Math.max(1, Math.ceil(wordCount / wordsPerMinute));
-
-    return minutes;
-  }
-
   const submit = async (data) => {
     console.log("[DEBUG - PostForm Submit] Submit function triggered.");
     if (post) {
@@ -62,7 +38,8 @@ export default function PostForm({post}) {
       const dbPost = await firebaseService.updatePost(post.slug || post.id, {
         ...data,
         featuredImage: fileUrl,
-        estimateReadTime: estimateReadTime(data.content),
+        estimateReadTime: blogFn.estimateReadTime(data.content),
+        previewText: blogFn.blogPreview(data.content),
       });
       if (dbPost) {
         console.log(
@@ -91,7 +68,8 @@ export default function PostForm({post}) {
           ...data,
           featuredImage: fileUrl,
           userId: userData?.uid || userData?.id,
-          estimatedtime: estimateReadTime(data?.content),
+          estimatedtime: blogFn.estimateReadTime(data?.content),
+          previewText: blogFn.blogPreview(data?.content),
           slug: data.slug,
         };
         console.log("GG: ", obj);

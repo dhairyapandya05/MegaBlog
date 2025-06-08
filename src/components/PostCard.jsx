@@ -10,6 +10,7 @@ function PostCard({
   featuredImage,
   estimatedtime,
   createdAt,
+  previewText,
 }) {
   useEffect(() => {
     console.log("content: ", content);
@@ -148,7 +149,7 @@ function PostCard({
           {/* Content Preview */}
           <div className="relative">
             <p className="line-clamp-3 text-gray-700 leading-relaxed">
-              {parse(content)}
+              {previewText ? previewText : parse(content)}
             </p>
             <p
               className="absolute right-0 bottom-0 text-purple-600 font-semibold px-2 hover:text-purple-700 transition-colors duration-200"

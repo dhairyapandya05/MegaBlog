@@ -22,31 +22,26 @@ import firebaseConfig from "../firebase/firebase";
 
 // Initialize Firebase app and services
 const app = initializeApp(firebaseConfig);
-db;
-storage;
+const db = getFirestore(app);
+const storage = getStorage(app);
 
 // Constants
-const POSTS_COLLECTION = "posts";
+const POSTS_COLLECTION = "profile";
 
-export class Service {
+export class ProfileService {
+  constructor() {
+    this.db = this.storage = getStorage(app);
+  }
 
-
-    constructor(){
-        this.db = getFirestore(app);
-        this.storage = getStorage(app);
-    }
-
-
-  async createPost({title, slug, content, featuredImage, status, userId}) {
+  async createProfile({userId, name, bio = "", avartar, socialmedaLinks = {}}) {
     try {
-      const postRef = doc(db, POSTS_COLLECTION, slug);
+      const postRef = doc(db, POSTS_COLLECTION, userId);
       await setDoc(postRef, {
-        title,
-        content,
-        featuredImage,
-        status,
+        name,
         userId,
         createdAt: new Date(),
+        avartar,
+        socialmedaLinks,
       });
       return {slug};
     } catch (error) {
@@ -54,7 +49,10 @@ export class Service {
     }
   }
 
-  async updatePost(slug, {title, content, featuredImage, status}) {
+  async updatePost(
+    slug,
+    {title, content, featuredImage, status, estimatedtime, previewText}
+  ) {
     try {
       const postRef = doc(db, POSTS_COLLECTION, slug);
       await updateDoc(postRef, {
@@ -63,6 +61,8 @@ export class Service {
         featuredImage,
         status,
         updatedAt: new Date(),
+        estimatedtime,
+        previewText,
       });
       return {slug};
     } catch (error) {
@@ -98,12 +98,22 @@ export class Service {
 
   async getPosts(status = "active") {
     try {
+      const snapshot = await getDocs(collection(db, POSTS_COLLECTION));
+      snapshot.forEach((doc) => {
+        console.log("All posts:", doc.id, doc.data());
+      });
+
       const postsQuery = query(
         collection(db, POSTS_COLLECTION),
         where("status", "==", status)
       );
       const querySnapshot = await getDocs(postsQuery);
-      return querySnapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}));
+      const res = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log("Filtered posts: ", res);
+      return res;
     } catch (error) {
       console.error("FirebaseService :: getPosts :: error", error);
       return [];
@@ -113,14 +123,16 @@ export class Service {
   // 🔽 File upload methods using Firebase Storage
 
   async uploadFile(file, path = "uploads") {
+    console.log("We are here", file, path);
     try {
-      const fileRef = ref(storage, ${path}/${Date.now()}_${file.name});
+      const fileRef = ref(storage, `${file.name}`);
       const snapshot = await uploadBytes(fileRef, file);
       const downloadURL = await getDownloadURL(snapshot.ref);
-      return {
+      let response = {
         url: downloadURL,
         path: snapshot.ref.fullPath,
       };
+      return response;
     } catch (error) {
       console.error("FirebaseService :: uploadFile :: error", error);
       return null;
@@ -143,5 +155,5 @@ export class Service {
   }
 }
 
-const firebaseService = new Service();
-export default firebaseService;
+const profileservice = new ProfileService();
+export default profileservice;
