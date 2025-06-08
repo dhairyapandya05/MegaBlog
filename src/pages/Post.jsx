@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import appwriteService from "../appwrite/config";
 import {
@@ -32,6 +32,13 @@ export default function Post() {
   const userData = useSelector((state) => state.auth.userData);
 
   const isAuthor = post && userData ? post.userId === userData.id : false;
+  const commentRef = useRef(null);
+
+  useEffect(() => {
+    if (showComments && commentRef.current) {
+      commentRef.current.scrollIntoView({behavior: "smooth"});
+    }
+  }, [showComments]);
 
   useEffect(() => {
     if (slug) {
@@ -248,7 +255,14 @@ export default function Post() {
 
                   {/* Comment Button */}
                   <button
-                    onClick={() => setShowComments(!showComments)}
+                    onClick={() => {
+                      setShowComments((prev) => !prev);
+                      // if (showComments) {
+                      //   commentRef.current?.scrollIntoView({
+                      //     behavior: "smooth",
+                      //   });
+                      // }
+                    }}
                     className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 transition-all duration-200"
                   >
                     <MessageCircle size={18} />
@@ -291,8 +305,12 @@ export default function Post() {
             </div>
 
             {/* Comments Section */}
+
             {showComments && (
-              <div className="border-t border-gray-100 p-6 md:p-8">
+              <div
+                ref={commentRef}
+                className="border-t border-gray-100 p-6 md:p-8"
+              >
                 <h3 className="text-xl font-bold text-gray-900 mb-6">
                   Comments ({commentsCount})
                 </h3>
