@@ -3,9 +3,13 @@ import {Container, Logo, LogoutBtn} from "../index";
 import {Link} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
+import {Avatar, AvatarFallback, AvatarImage} from "@radix-ui/react-avatar";
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status);
+  const profilePic = useSelector(
+    (state) => state.auth.userData?.profilepic || ""
+  );
   const navigate = useNavigate();
 
   const navItems = [
@@ -37,7 +41,7 @@ function Header() {
   ];
 
   return (
-    <header className="py-3 shadow bg-white sticky top-0 z-50">
+    <header className="py-3 shadow bg-white sticky top-0 z-50 ">
       <Container>
         <nav className="flex">
           <div className="mr-4">
@@ -64,6 +68,16 @@ function Header() {
               </li>
             )}
           </ul>
+          <Avatar className="w-12">
+            <AvatarImage
+              src={
+                profilePic
+                  ? `profilePic`
+                  : "https://avatar.iran.liara.run/username?username=anonimous"
+              }
+            />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
         </nav>
       </Container>
     </header>
