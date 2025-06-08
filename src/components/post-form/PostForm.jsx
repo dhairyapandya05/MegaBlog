@@ -38,7 +38,7 @@ export default function PostForm({post}) {
       const dbPost = await firebaseService.updatePost(post.slug || post.id, {
         ...data,
         featuredImage: fileUrl,
-        estimateReadTime: blogFn.estimateReadTime(data.content),
+        estimatedtime: blogFn.estimateReadTime(data?.content),
         previewText: blogFn.blogPreview(data.content),
       });
       if (dbPost) {

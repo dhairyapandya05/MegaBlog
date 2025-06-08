@@ -20,7 +20,7 @@ export class BlogFunctions {
 
     // Estimate time in minutes (at least 1)
     const minutes = Math.max(1, Math.ceil(wordCount / wordsPerMinute));
-
+    console.log("Minutes: ", minutes);
     return minutes;
   }
 
