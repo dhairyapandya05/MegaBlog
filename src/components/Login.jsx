@@ -20,7 +20,11 @@ function Login() {
       if (session) {
         const userData = await authService.getCurrentUser();
         console.log("User Data: ", userData);
-        let userdataID = {id: userData.uid};
+        let userdataID = {
+          id: userData?.uid,
+          name: userData?.displayName,
+          email: userData?.email,
+        };
         if (userData) dispatch(authLogin(userdataID));
         navigate("/");
       }

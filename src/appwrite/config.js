@@ -33,7 +33,15 @@ export class Service {
     this.db = this.storage = getStorage(app);
   }
 
-  async createPost({title, slug, content, featuredImage, status, userId}) {
+  async createPost({
+    title,
+    slug,
+    content,
+    featuredImage,
+    status,
+    userId,
+    estimatedtime,
+  }) {
     try {
       const postRef = doc(db, POSTS_COLLECTION, slug);
       await setDoc(postRef, {
@@ -43,6 +51,7 @@ export class Service {
         status,
         userId,
         createdAt: new Date(),
+        estimatedtime,
       });
       return {slug};
     } catch (error) {
@@ -50,7 +59,10 @@ export class Service {
     }
   }
 
-  async updatePost(slug, {title, content, featuredImage, status}) {
+  async updatePost(
+    slug,
+    {title, content, featuredImage, status, estimatedtime}
+  ) {
     try {
       const postRef = doc(db, POSTS_COLLECTION, slug);
       await updateDoc(postRef, {
@@ -59,6 +71,7 @@ export class Service {
         featuredImage,
         status,
         updatedAt: new Date(),
+        estimatedtime,
       });
       return {slug};
     } catch (error) {

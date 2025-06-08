@@ -14,12 +14,38 @@ export default function PostForm({post}) {
         slug: post?.$id || "",
         content: post?.content || "",
         status: post?.status || "active",
+        estimatedtime: post?.estimatedtime || 0,
       },
     }
   );
 
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
+
+  function estimateReadTime(htmlContent) {
+    // Create a temporary element to parse HTML
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = htmlContent;
+
+    // Remove non-text content like <pre>, <code>, and any script/style tags
+    const tagsToRemove = tempDiv.querySelectorAll("pre, code, script, style");
+    tagsToRemove.forEach((tag) => tag.remove());
+
+    // Extract readable text
+    const text = tempDiv.textContent || "";
+
+    // Clean and count words
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    const wordCount = words.length;
+
+    // Reading speed (words per minute)
+    const wordsPerMinute = 200;
+
+    // Estimate time in minutes (at least 1)
+    const minutes = Math.max(1, Math.ceil(wordCount / wordsPerMinute));
+
+    return minutes;
+  }
 
   const submit = async (data) => {
     console.log("[DEBUG - PostForm Submit] Submit function triggered.");
@@ -36,6 +62,7 @@ export default function PostForm({post}) {
       const dbPost = await firebaseService.updatePost(post.slug || post.id, {
         ...data,
         featuredImage: fileUrl,
+        estimateReadTime: estimateReadTime(data.content),
       });
       if (dbPost) {
         console.log(
@@ -60,12 +87,15 @@ export default function PostForm({post}) {
       });
 
       try {
-        const dbPost = await firebaseService.createPost({
+        let obj = {
           ...data,
           featuredImage: fileUrl,
           userId: userData?.uid || userData?.id,
+          estimatedtime: estimateReadTime(data?.content),
           slug: data.slug,
-        });
+        };
+        console.log("GG: ", obj);
+        const dbPost = await firebaseService.createPost(obj);
         if (dbPost) {
           console.log(
             "[DEBUG - PostForm Submit] New post created successfully:",
@@ -103,6 +133,10 @@ export default function PostForm({post}) {
 
     return () => subscription.unsubscribe();
   }, [watch, slugTransform, setValue]);
+
+  React.useEffect(() => {
+    console.log("⭐⭐⭐⭐Post content: ", getValues("content"));
+  }, []);
 
   return (
     <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
