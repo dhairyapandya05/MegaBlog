@@ -4,12 +4,12 @@ import {Link} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {Avatar, AvatarFallback, AvatarImage} from "@radix-ui/react-avatar";
+import {Popover, PopoverContent, PopoverTrigger} from "@radix-ui/react-popover";
+import Profile from "./Profile";
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status);
-  const profilePic = useSelector(
-    (state) => state.auth.userData?.profilepic || ""
-  );
+
   const navigate = useNavigate();
 
   const navItems = [
@@ -68,16 +68,7 @@ function Header() {
               </li>
             )}
           </ul>
-          <Avatar className="w-12">
-            <AvatarImage
-              src={
-                profilePic
-                  ? `profilePic`
-                  : "https://avatar.iran.liara.run/username?username=anonimous"
-              }
-            />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+          <Profile />
         </nav>
       </Container>
     </header>

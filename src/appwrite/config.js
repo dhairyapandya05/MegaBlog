@@ -43,6 +43,7 @@ export class Service {
     userId,
     estimatedtime,
     previewText,
+    viewCount = 0,
   }) {
     try {
       const postRef = doc(db, POSTS_COLLECTION, slug);
@@ -56,6 +57,7 @@ export class Service {
         createdAt: new Date(),
         estimatedtime,
         previewText,
+        viewCount,
       });
       return {slug};
     } catch (error) {

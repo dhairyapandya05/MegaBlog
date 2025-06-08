@@ -233,7 +233,7 @@ export default function Post() {
                 </div>
                 <div className="flex items-center gap-1">
                   <Eye size={16} />
-                  <span>{viewsCount} views</span>
+                  <span>{post?.viewCount || 0} views</span>
                 </div>
               </div>
 
