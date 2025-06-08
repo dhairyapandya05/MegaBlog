@@ -135,28 +135,54 @@ export default function Post() {
     }
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+  const formatDate = (dateInput) => {
+    try {
+      let date;
+
+      // Check if it's a Firestore timestamp object
+      if (dateInput && typeof dateInput === "object" && dateInput.seconds) {
+        // Convert Firestore timestamp to JavaScript Date
+        // Firestore timestamp has seconds and nanoseconds
+        date = new Date(
+          dateInput.seconds * 1000 + dateInput.nanoseconds / 1000000
+        );
+      }
+      // Check if it's a string in the format "June 8, 2025 at 5:55:46 PM UTC+5:30"
+      else if (typeof dateInput === "string" && dateInput.includes(" at ")) {
+        const datePart = dateInput.split(" at ")[0];
+        date = new Date(datePart);
+      }
+      // Handle other string formats or Date objects
+      else {
+        date = new Date(dateInput);
+      }
+
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        console.warn("Invalid date:", dateInput);
+        return "Invalid Date";
+      }
+
+      const options = {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      };
+      return date.toLocaleDateString("en-US", options);
+    } catch (error) {
+      console.warn("Date parsing error:", error);
+      return "Invalid Date";
+    }
   };
 
   if (!post) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-b  mb-8">
       <Container>
         <div className="max-w-4xl mx-auto">
           {/* Hero Image */}
-          <div className="relative">
-            <img
-              src={appwriteService.getFilePreview(post.featuredImage)}
-              alt={post.title}
-              className="w-full h-64 md:h-96 object-cover rounded-2xl shadow-2xl"
-            />
-
+          <div className="relative mt-6 ">
             {/* Author Actions */}
             {isAuthor && (
               <div className="absolute top-4 right-4 flex gap-2">
@@ -177,6 +203,11 @@ export default function Post() {
 
           {/* Main Content */}
           <div className="bg-white rounded-2xl shadow-xl mt-8 overflow-hidden">
+            <img
+              src={appwriteService.getFilePreview(post.featuredImage)}
+              alt={post.title}
+              className="w-full h-64 md:h-96 object-cover rounded-2xl shadow-2xl"
+            />
             {/* Header */}
             <div className="p-6 md:p-8 border-b border-gray-100">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
@@ -184,7 +215,7 @@ export default function Post() {
               </h1>
 
               {/* Meta Information */}
-              {/* <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6">
                 <div className="flex items-center gap-1">
                   <User size={16} />
                   <span>By {post.author || "Anonymous"}</span>
@@ -197,7 +228,7 @@ export default function Post() {
                   <Eye size={16} />
                   <span>{viewsCount} views</span>
                 </div>
-              </div> */}
+              </div>
 
               {/* Engagement Bar */}
               <div className="flex items-center justify-between py-4 border-t border-b border-gray-100">

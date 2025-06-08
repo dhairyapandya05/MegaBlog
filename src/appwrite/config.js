@@ -34,6 +34,7 @@ export class Service {
   }
 
   async createPost({
+    author,
     title,
     slug,
     content,
@@ -46,6 +47,7 @@ export class Service {
     try {
       const postRef = doc(db, POSTS_COLLECTION, slug);
       await setDoc(postRef, {
+        author,
         title,
         content,
         featuredImage,

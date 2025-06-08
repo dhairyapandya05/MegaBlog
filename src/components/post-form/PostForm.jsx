@@ -37,6 +37,7 @@ export default function PostForm({post}) {
       }
       const dbPost = await firebaseService.updatePost(post.slug || post.id, {
         ...data,
+
         featuredImage: fileUrl,
         estimatedtime: blogFn.estimateReadTime(data?.content),
         previewText: blogFn.blogPreview(data.content),
@@ -66,6 +67,7 @@ export default function PostForm({post}) {
       try {
         let obj = {
           ...data,
+          author: userData?.name || userData?.displayName || "Anonymous",
           featuredImage: fileUrl,
           userId: userData?.uid || userData?.id,
           estimatedtime: blogFn.estimateReadTime(data?.content),
