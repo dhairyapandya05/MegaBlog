@@ -24,7 +24,7 @@ export default function PostForm({post}) {
   const submit = async (data) => {
     console.log("[DEBUG - PostForm Submit] Submit function triggered.");
     if (post) {
-      console.log("post executed");
+      console.log("we have a post");
       let fileUrl = post.featuredImage;
       if (data.image && data.image[0]) {
         const file = await firebaseService.uploadFile(data.image[0]);
@@ -45,7 +45,7 @@ export default function PostForm({post}) {
         navigate(`/post/${dbPost.slug || dbPost.id}`);
       }
     } else {
-      console.log("patch executed");
+      console.log("we do not have a post, creating a new one");
 
       let fileUrl = "";
       if (data.image && data.image[0]) {
@@ -55,7 +55,7 @@ export default function PostForm({post}) {
       console.log("[DEBUG - PostForm Submit] Creating new post with data:", {
         ...data,
         featuredImage: fileUrl,
-        userId: userData?.uid || userData?.$id,
+        userId: userData?.uid || userData?.id,
         slug: data.slug,
       });
 
@@ -63,7 +63,7 @@ export default function PostForm({post}) {
         const dbPost = await firebaseService.createPost({
           ...data,
           featuredImage: fileUrl,
-          userId: userData?.uid || userData?.$id,
+          userId: userData?.uid || userData?.id,
           slug: data.slug,
         });
         if (dbPost) {

@@ -94,13 +94,21 @@ export class Service {
 
   async getPosts(status = "active") {
     try {
+      const snapshot = await getDocs(collection(db, POSTS_COLLECTION));
+      snapshot.forEach((doc) => {
+        console.log("All posts:", doc.id, doc.data());
+      });
+
       const postsQuery = query(
         collection(db, POSTS_COLLECTION),
         where("status", "==", status)
       );
       const querySnapshot = await getDocs(postsQuery);
-      let res = querySnapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}));
-      console.log("Res: ", res);
+      const res = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log("Filtered posts: ", res);
       return res;
     } catch (error) {
       console.error("FirebaseService :: getPosts :: error", error);
