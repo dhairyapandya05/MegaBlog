@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
-import appwriteService from "../appwrite/config";
+import firebaseService from "../appwrite/config";
 import {
   Heart,
   MessageCircle,
@@ -15,6 +15,7 @@ import {
 import {Button, Container} from "../components";
 import parse from "html-react-parser";
 import {useSelector} from "react-redux";
+import CommentSection from "../components/CommentSection";
 
 export default function Post() {
   const [post, setPost] = useState(null);
@@ -42,7 +43,7 @@ export default function Post() {
 
   useEffect(() => {
     if (slug) {
-      appwriteService.getPost(slug).then((post) => {
+      firebaseService.getPost(slug).then((post) => {
         if (post) {
           setPost(post);
           // Initialize counts (you'll need to implement these in your backend)
@@ -64,9 +65,9 @@ export default function Post() {
 
   const deletePost = () => {
     if (window.confirm("Are you sure you want to delete this post?")) {
-      appwriteService.deletePost(post.id).then((status) => {
+      firebaseService.deletePost(post.id).then((status) => {
         if (status) {
-          appwriteService.deleteFile(post.featuredImage);
+          firebaseService.deleteFile(post.featuredImage);
           navigate("/");
         }
       });
@@ -84,7 +85,7 @@ export default function Post() {
     setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
 
     // Implement backend call to update likes
-    // appwriteService.toggleLike(post.id, userData.id);
+    // firebaseService.toggleLike(post.id, userData.id);
   };
 
   const handleBookmark = () => {
@@ -96,7 +97,7 @@ export default function Post() {
     setIsBookmarked(!isBookmarked);
 
     // Implement backend call to update bookmarks
-    // appwriteService.toggleBookmark(post.id, userData.id);
+    // firebaseService.toggleBookmark(post.id, userData.id);
   };
 
   const handleShare = async () => {
@@ -138,7 +139,7 @@ export default function Post() {
       setNewComment("");
 
       // Implement backend call to save comment
-      // appwriteService.addComment(post.id, comment);
+      // firebaseService.addComment(post.id, comment);
     }
   };
 
@@ -187,7 +188,7 @@ export default function Post() {
   return (
     <div className="min-h-screen bg-gradient-to-b  mb-8">
       <Container>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-xl p-8 relative">
           {/* Hero Image */}
           <div className="relative mt-6 ">
             {/* Author Actions */}
@@ -200,204 +201,103 @@ export default function Post() {
                 </Link>
                 <button
                   onClick={deletePost}
-                  className="bg-white/90 backdrop-blur-sm hover:bg-red-50 text-red-600 p-2 rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
+                  className="bg-red-500/90 backdrop-blur-sm hover:bg-red-600 text-white p-2 rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
                 >
                   <Trash2 size={18} />
                 </button>
               </div>
             )}
-          </div>
-
-          {/* Main Content */}
-          <div className="bg-white rounded-2xl shadow-xl mt-8 overflow-hidden">
             <img
-              src={appwriteService.getFilePreview(post.featuredImage)}
+              src={firebaseService.getFilePreview(post.featuredImage)}
               alt={post.title}
-              className="w-full h-64 md:h-96 object-cover rounded-2xl shadow-2xl"
+              className="rounded-xl w-full max-h-[400px] object-cover shadow-md"
             />
-            {/* Header */}
-            <div className="p-6 md:p-8 border-b border-gray-100">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
-                {post.title}
-              </h1>
-
-              {/* Meta Information */}
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6">
-                <div className="flex items-center gap-1">
-                  <User size={16} />
-                  <span>By {post.author || "Anonymous"}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Calendar size={16} />
-                  <span>{formatDate(post.createdAt || new Date())}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Eye size={16} />
-                  <span>{post?.viewCount || 0} views</span>
-                </div>
-              </div>
-
-              {/* Engagement Bar */}
-              <div className="flex items-center justify-between py-4 border-t border-b border-gray-100">
-                <div className="flex items-center gap-6">
-                  {/* Like Button */}
-                  <button
-                    onClick={handleLike}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 ${
-                      isLiked
-                        ? "bg-red-50 text-red-600 hover:bg-red-100"
-                        : "bg-gray-50 text-gray-600 hover:bg-gray-100"
-                    }`}
-                  >
-                    <Heart size={18} fill={isLiked ? "currentColor" : "none"} />
-                    <span className="font-medium">{likesCount}</span>
-                  </button>
-
-                  {/* Comment Button */}
-                  <button
-                    onClick={() => {
-                      setShowComments((prev) => !prev);
-                      // if (showComments) {
-                      //   commentRef.current?.scrollIntoView({
-                      //     behavior: "smooth",
-                      //   });
-                      // }
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 transition-all duration-200"
-                  >
-                    <MessageCircle size={18} />
-                    <span className="font-medium">{commentsCount}</span>
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {/* Bookmark Button */}
-                  <button
-                    onClick={handleBookmark}
-                    className={`p-2 rounded-full transition-all duration-200 ${
-                      isBookmarked
-                        ? "bg-blue-50 text-blue-600 hover:bg-blue-100"
-                        : "bg-gray-50 text-gray-600 hover:bg-gray-100"
-                    }`}
-                  >
-                    <Bookmark
-                      size={18}
-                      fill={isBookmarked ? "currentColor" : "none"}
-                    />
-                  </button>
-
-                  {/* Share Button */}
-                  <button
-                    onClick={handleShare}
-                    className="p-2 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 transition-all duration-200"
-                  >
-                    <Share2 size={18} />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Article Content */}
-            <div className="p-6 md:p-8">
-              <div className="prose prose-lg max-w-none text-gray-800">
-                {parse(post.content)}
-              </div>
-            </div>
-
-            {/* Comments Section */}
-
-            {showComments && (
-              <div
-                ref={commentRef}
-                className="border-t border-gray-100 p-6 md:p-8"
-              >
-                <h3 className="text-xl font-bold text-gray-900 mb-6">
-                  Comments ({commentsCount})
-                </h3>
-
-                {/* Comment Form */}
-                {userData ? (
-                  <form onSubmit={handleCommentSubmit} className="mb-8">
-                    <div className="flex gap-4">
-                      <img
-                        src={userData.avatar || "/default-avatar.png"}
-                        alt={userData.name}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                      <div className="flex-1">
-                        <textarea
-                          value={newComment}
-                          onChange={(e) => setNewComment(e.target.value)}
-                          placeholder="Write a comment..."
-                          className="w-full p-3 border border-gray-200 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          rows="3"
-                        />
-                        <div className="flex justify-end mt-2">
-                          <button
-                            type="submit"
-                            disabled={!newComment.trim()}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                          >
-                            Post Comment
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </form>
-                ) : (
-                  <div className="text-center py-8 bg-gray-50 rounded-lg mb-8">
-                    <p className="text-gray-600 mb-4">
-                      Please log in to leave a comment
-                    </p>
-                    <Link
-                      to="/login"
-                      className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      Log In
-                    </Link>
-                  </div>
-                )}
-
-                {/* Comments List */}
-                <div className="space-y-6">
-                  {comments.map((comment) => (
-                    <div key={comment.id} className="flex gap-4">
-                      <img
-                        src={comment.avatar}
-                        alt={comment.author}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                      <div className="flex-1">
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="font-medium text-gray-900">
-                              {comment.author}
-                            </span>
-                            <span className="text-sm text-gray-500">
-                              {formatDate(comment.createdAt)}
-                            </span>
-                          </div>
-                          <p className="text-gray-700">{comment.content}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-
-                  {comments.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      <MessageCircle
-                        size={48}
-                        className="mx-auto mb-4 opacity-50"
-                      />
-                      <p>
-                        No comments yet. Be the first to share your thoughts!
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
+          {/* Post Details */}
+          <div className="flex items-center justify-between text-gray-600 text-sm mt-4 mb-6">
+            <div className="flex gap-4">
+              <div className="flex items-center gap-2">
+                <User size={16} />
+                <span>{post.author || "Anonymous"}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Eye size={16} />
+                <span>{post?.viewCount || 0} views</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar size={16} />
+              <span>{formatDate(post.createdAt)}</span>
+            </div>
+          </div>
+
+          {/* Post Title */}
+          <h1 className="text-4xl font-extrabold text-gray-900 mb-6 text-center leading-tight">
+            {post.title}
+          </h1>
+
+          {/* Article Content */}
+          <div className="prose prose-lg max-w-none text-gray-800 mx-auto bg-white/80 p-4 rounded-xl">
+            {parse(post.content)}
+          </div>
+          {/* Engagement Bar */}
+          <div className="flex items-center justify-between py-4 border-t border-b border-gray-100 mt-8">
+            <div className="flex items-center gap-6">
+              {/* Like Button */}
+              <button
+                onClick={handleLike}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 ${
+                  isLiked
+                    ? "bg-red-50 text-red-600 hover:bg-red-100"
+                    : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                <Heart size={18} fill={isLiked ? "currentColor" : "none"} />
+                <span className="font-medium">{likesCount}</span>
+              </button>
+
+              {/* Comment Button (will scroll to comments) */}
+              <button
+                onClick={() => setShowComments((prev) => !prev)}
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 transition-all duration-200"
+              >
+                <MessageCircle size={18} />
+                <span className="font-medium">{commentsCount}</span>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* Bookmark Button */}
+              <button
+                onClick={handleBookmark}
+                className={`p-2 rounded-full transition-all duration-200 ${
+                  isBookmarked
+                    ? "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                    : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                <Bookmark
+                  size={18}
+                  fill={isBookmarked ? "currentColor" : "none"}
+                />
+              </button>
+
+              {/* Share Button */}
+              <button
+                onClick={handleShare}
+                className="p-2 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 transition-all duration-200"
+              >
+                <Share2 size={18} />
+              </button>
+            </div>
+          </div>
+
+          {/* Comments Section */}
+          {showComments && (
+            <div className="mt-8">
+              <CommentSection />
+            </div>
+          )}
         </div>
       </Container>
     </div>
