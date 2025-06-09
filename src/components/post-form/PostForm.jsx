@@ -12,7 +12,7 @@ export default function PostForm({post}) {
     {
       defaultValues: {
         title: post?.title || "",
-        slug: post?.$id || "",
+        slug: post?.id || "",
         content: post?.content || "",
         status: post?.status || "active",
         estimatedtime: post?.estimatedtime || 0,
