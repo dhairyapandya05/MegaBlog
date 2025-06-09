@@ -15,14 +15,18 @@ function App() {
       .getCurrentUser()
       .then((userData) => {
         if (userData) {
-          // let obj = {
-          //   userId: userData.uid,
-          //   name: userData.displayName,
-          //   email: userData.email,
-          //   // image: userData?.image,
-          // };
-          console.log("🔥Sending :::User Data: ", userData);
-          dispatch(login(userData));
+          let obj = {
+            id: userData.uid,
+            name: userData.displayName,
+            email: userData.email,
+            // image: userData?.image,
+          };
+          console.log("🔥Sending :::User Data: Before", obj);
+
+          userData.id = userData.uid;
+          userData.name = userData.displayName;
+          console.log("🔥Sending :::User Data: ", obj);
+          dispatch(login(obj));
         } else {
           dispatch(logout());
         }
