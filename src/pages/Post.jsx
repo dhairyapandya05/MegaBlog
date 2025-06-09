@@ -294,7 +294,7 @@ export default function Post() {
 
           {/* Comments Section */}
           {showComments && (
-            <div className="mt-8">
+            <div className="mt-8 ">
               <CommentSection />
             </div>
           )}

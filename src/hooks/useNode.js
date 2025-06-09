@@ -3,19 +3,23 @@
 const useNode = () => {
   const insertNode = function (tree, commentId, item) {
     if (tree.id === commentId) {
-      tree.items.push({
-        id: new Date().getTime(),
-        name: item,
-        likes: 0,
-        dislikes: 0,
-        isLiked: false,
-        items: [],
-      });
-      return tree;
+      return {
+        ...tree,
+        items: [
+          ...tree.items,
+          {
+            id: new Date().getTime(),
+            name: item,
+            likes: 0,
+            dislikes: 0,
+            isLiked: false,
+            items: [],
+          },
+        ],
+      };
     }
 
-    let latestNode = [];
-    latestNode = tree.items.map((ob) => {
+    const latestNode = tree.items.map((ob) => {
       return insertNode(ob, commentId, item);
     });
 
@@ -24,46 +28,51 @@ const useNode = () => {
 
   const editNode = (tree, commentId, value) => {
     if (tree.id === commentId) {
-      tree.name = value;
-      return tree;
+      return {
+        ...tree,
+        name: value,
+      };
     }
 
-    tree.items.map((ob) => {
+    const latestNode = tree.items.map((ob) => {
       return editNode(ob, commentId, value);
     });
 
-    return {...tree};
+    return {...tree, items: latestNode};
   };
 
   const deleteNode = (tree, id) => {
-    for (let i = 0; i < tree.items.length; i++) {
-      const currentItem = tree.items[i];
-      if (currentItem.id === id) {
-        tree.items.splice(i, 1);
-        return tree;
-      } else {
-        deleteNode(currentItem, id);
-      }
+    const filteredItems = tree.items.filter((item) => item.id !== id);
+
+    if (filteredItems.length !== tree.items.length) {
+      return {...tree, items: filteredItems};
     }
-    return tree;
+
+    const latestNode = tree.items.map((ob) => {
+      return deleteNode(ob, id);
+    });
+
+    return {...tree, items: latestNode};
   };
 
   const likeNode = (tree, commentId) => {
     if (tree.id === commentId) {
-      tree.isLiked = !tree.isLiked;
-      if (tree.isLiked) {
-        tree.likes = (tree.likes || 0) + 1;
-      } else {
-        tree.likes = Math.max((tree.likes || 0) - 1, 0);
-      }
-      return tree;
+      const newIsLiked = !tree.isLiked;
+      const newLikes = newIsLiked
+        ? (tree.likes || 0) + 1
+        : Math.max((tree.likes || 0) - 1, 0);
+      return {
+        ...tree,
+        isLiked: newIsLiked,
+        likes: newLikes,
+      };
     }
 
-    tree.items.map((ob) => {
+    const latestNode = tree.items.map((ob) => {
       return likeNode(ob, commentId);
     });
 
-    return {...tree};
+    return {...tree, items: latestNode};
   };
 
   return {insertNode, editNode, deleteNode, likeNode};
