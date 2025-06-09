@@ -17,6 +17,8 @@ function Profile() {
   const profilePic = useSelector(
     (state) => state.auth.userData?.profilepic || ""
   );
+  const userId = useSelector((state) => state.auth.userData?.id || state.auth.userData?.uid);
+
   return (
     <Popover>
       <PopoverTrigger>
@@ -38,7 +40,7 @@ function Profile() {
             <button
               className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition flex items-center gap-3"
               onClick={() => {
-                navigate("/profile/:prodileId");
+                navigate(`/profile/${userId}`);
               }}
             >
               <User size={16} />
