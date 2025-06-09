@@ -295,7 +295,13 @@ export default function Post() {
           {/* Comments Section */}
           {showComments && (
             <div className="mt-8 ">
-              <CommentSection />
+              <CommentSection
+                slug={slug}
+                comment={JSON.parse(
+                  post?.comment ||
+                    '{"id":1,"items":[],"isLiked":false,"likes":0,"author":{"id":1,"name":"Anonimous","avartar":"https://avatar.iran.liara.run/username?username=Anonimous"}}'
+                )}
+              />
             </div>
           )}
         </div>

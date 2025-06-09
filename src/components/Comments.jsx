@@ -199,7 +199,7 @@ const Comment = ({
                 )}
               </div>
 
-              {userData.id === comment.author?.id && !editMode && (
+              {userData?.id === comment.author?.id && !editMode && (
                 <div className="flex items-center gap-2">
                   <Action
                     className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded transition-colors duration-200"

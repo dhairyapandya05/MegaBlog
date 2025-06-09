@@ -12,10 +12,6 @@ function PostCard({
   createdAt,
   previewText,
 }) {
-  useEffect(() => {
-    console.log("content: ", content);
-  }, []);
-
   // Format the creation date
   const formatDate = (dateInput) => {
     try {
