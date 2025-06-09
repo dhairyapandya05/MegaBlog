@@ -13,6 +13,7 @@ import EditPost from "./pages/EditPost.jsx";
 import Post from "./pages/Post.jsx";
 
 import AllPosts from "./pages/AllPost.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -58,6 +59,15 @@ const router = createBrowserRouter([
           <Protected authentication={true}>
             {" "}
             <AddPost />
+          </Protected>
+        ),
+      },
+      {
+        path: "/profile/:profileId",
+        element: (
+          <Protected authentication={false}>
+            {" "}
+            <ProfilePage/>
           </Protected>
         ),
       },

@@ -15,7 +15,14 @@ function App() {
       .getCurrentUser()
       .then((userData) => {
         if (userData) {
-          dispatch(login({userData}));
+          // let obj = {
+          //   userId: userData.uid,
+          //   name: userData.displayName,
+          //   email: userData.email,
+          //   // image: userData?.image,
+          // };
+          console.log("🔥Sending :::User Data: ", userData);
+          dispatch(login(userData));
         } else {
           dispatch(logout());
         }
