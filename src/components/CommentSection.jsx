@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
 import Comment from "./Comments";
-import useNode from "../Hooks/useNode";
-// import useNode from "../hooks/useNode";
+import useNode from "../hooks/useNode";
 
 const CommentSection = () => {
   const [commentsData, setCommentsData] = useState({
