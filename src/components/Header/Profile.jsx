@@ -38,7 +38,7 @@ function Profile() {
             <button
               className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition flex items-center gap-3"
               onClick={() => {
-                navigate("/profile");
+                navigate("/profile/:prodileId");
               }}
             >
               <User size={16} />

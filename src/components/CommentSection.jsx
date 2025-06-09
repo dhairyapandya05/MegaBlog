@@ -48,7 +48,7 @@ const CommentSection = () => {
 
   return (
     <div className="min-h-screen py-8 px-4">
-      <div className="max-w-2xl">
+      <div className=" w-full">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">
           {`Comments (${commentCount})`}
         </h1>

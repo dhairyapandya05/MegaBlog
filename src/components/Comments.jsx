@@ -50,7 +50,7 @@ const Comment = ({
   };
 
   return (
-    <div className="w-full max-w-2xl ">
+    <div className="w-full ">
       <div
         className={
           comment.id === 1
