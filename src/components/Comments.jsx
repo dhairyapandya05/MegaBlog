@@ -1,6 +1,7 @@
 import {useEffect, useState, useRef} from "react";
 import Action from "./Action";
 import {Heart, MessageCircle, ChevronUp, ChevronDown} from "lucide-react";
+import {useSelector} from "react-redux";
 
 const Comment = ({
   handleInsertNode,
@@ -14,6 +15,17 @@ const Comment = ({
   const [showInput, setShowInput] = useState(false);
   const [expand, setExpand] = useState(false);
   const inputRef = useRef(null);
+
+  const userData = useSelector((state) => state.auth.userData);
+  const metaData = userData
+    ? {
+        id: userData.id,
+        name: userData.name,
+        avartar:
+          userData.avatar ||
+          `https://avatar.iran.liara.run/username?username=${userData.name}`,
+      }
+    : {};
 
   useEffect(() => {
     inputRef?.current?.focus();
@@ -33,7 +45,7 @@ const Comment = ({
       handleEditNode(comment.id, inputRef?.current?.innerText);
     } else {
       setExpand(true);
-      handleInsertNode(comment.id, input);
+      handleInsertNode(comment.id, input, metaData);
       setShowInput(false);
       setInput("");
     }
@@ -47,6 +59,11 @@ const Comment = ({
 
   const handleLike = () => {
     handleLikeNode(comment.id);
+  };
+
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
   return (
@@ -78,6 +95,21 @@ const Comment = ({
           </div>
         ) : (
           <div>
+            <div className="flex items-center gap-2 mb-2">
+              {comment.author?.avartar && (
+                <img
+                  src={comment.author.avartar}
+                  alt={comment.author.name || "User Avatar"}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              )}
+              <span className="font-semibold text-gray-900 text-sm">
+                {comment.author?.name || "Anonymous User"}
+              </span>
+              <span className="text-gray-500 text-xs">
+                {formatDate(comment.id)}
+              </span>
+            </div>
             <div className="mb-3">
               <span
                 contentEditable={editMode}
@@ -163,7 +195,7 @@ const Comment = ({
                 )}
               </div>
 
-              {!editMode && (
+              {userData.id === comment.author?.id && !editMode && (
                 <div className="flex items-center gap-2">
                   <Action
                     className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded transition-colors duration-200"

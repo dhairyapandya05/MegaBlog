@@ -1,7 +1,7 @@
 // useNode.js - Hook for managing comment tree operations
 
 const useNode = () => {
-  const insertNode = function (tree, commentId, item) {
+  const insertNode = function (tree, commentId, item, metaData) {
     if (tree.id === commentId) {
       return {
         ...tree,
@@ -14,13 +14,18 @@ const useNode = () => {
             dislikes: 0,
             isLiked: false,
             items: [],
+            author: {
+              id: metaData?.id,
+              name: metaData?.name,
+              avartar: metaData?.avartar,
+            },
           },
         ],
       };
     }
 
     const latestNode = tree.items.map((ob) => {
-      return insertNode(ob, commentId, item);
+      return insertNode(ob, commentId, item, metaData);
     });
 
     return {...tree, items: latestNode};

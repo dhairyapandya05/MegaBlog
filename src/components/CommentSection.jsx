@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
 import Comment from "./Comments";
 import useNode from "../hooks/useNode";
+import {useSelector} from "react-redux";
 
 const CommentSection = () => {
   const [commentsData, setCommentsData] = useState({
@@ -8,6 +9,11 @@ const CommentSection = () => {
     items: [],
     isLiked: false,
     likes: 0,
+    author: {
+      id: 1,
+      name: "Anonimous",
+      avartar: "https://avatar.iran.liara.run/username?username=Anonimous",
+    },
   });
 
   const [commentCount, setCommentCount] = useState(0);
@@ -18,13 +24,14 @@ const CommentSection = () => {
   useEffect(() => {
     const count = commentsData.items.length;
     setCommentCount(count);
+    console.log("Comments Data: ", commentsData);
 
     // Optional: Log the change for debugging
     console.log(`Comments count updated: ${count}`);
   }, [commentsData.items]); // Dependency on commentsData.items
 
-  const handleInsertNode = (folderId, item) => {
-    const finalStructure = insertNode(commentsData, folderId, item);
+  const handleInsertNode = (folderId, item, metaData) => {
+    const finalStructure = insertNode(commentsData, folderId, item, metaData);
     setCommentsData(finalStructure);
   };
 

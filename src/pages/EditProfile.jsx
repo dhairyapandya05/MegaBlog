@@ -49,11 +49,11 @@ function EditProfile() {
           }
         } else {
           // Redirect if not authorized to edit this profile
-          navigate('/profile/' + (userData?.uid || ''));
+          navigate('/profile/' + (userData?.id || ''));
         }
       } catch (error) {
         console.error('Error fetching profile data for edit:', error);
-        navigate('/profile/' + (userData?.uid || '')); // Redirect on error
+        navigate('/profile/' + (userData?.id || '')); // Redirect on error
       }
       setLoading(false);
     };
