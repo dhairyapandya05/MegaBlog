@@ -79,6 +79,7 @@ const CommentSection = (props) => {
           handleDeleteNode={handleDeleteNode}
           handleLikeNode={handleLikeNode}
           comment={commentsData}
+          expandVal={true} //I am expanding the very first comment
         />
       </div>
     </div>

@@ -9,11 +9,12 @@ const Comment = ({
   handleDeleteNode,
   handleLikeNode,
   comment,
+  expandVal = false,
 }) => {
   const [input, setInput] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [showInput, setShowInput] = useState(false);
-  const [expand, setExpand] = useState(false);
+  const [expand, setExpand] = useState(expandVal);
   const inputRef = useRef(null);
 
   const userData = useSelector((state) => state.auth.userData);
