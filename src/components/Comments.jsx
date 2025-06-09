@@ -73,7 +73,7 @@ const Comment = ({
               type="COMMENT"
               handleClick={onAddComment}
             >
-              Post
+              Comment
             </Action>
           </div>
         ) : (
