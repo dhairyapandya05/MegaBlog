@@ -41,7 +41,7 @@ Checkout the youtube Tutorial: [TypeNode Youtube Video](https://youtu.be/BeXDl1B
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/blogverse.git
+   git clone https://github.com/dhairyapandya05/MegaBlog.git
 
    ```
 
@@ -64,6 +64,9 @@ Checkout the youtube Tutorial: [TypeNode Youtube Video](https://youtu.be/BeXDl1B
 
 
 ![8](https://github.com/user-attachments/assets/786b7d78-1d67-446f-a389-b813b142c286)
+
+
+![image](https://github.com/user-attachments/assets/0d1d8818-867a-4ceb-b497-a11a7c727a51)
 
 
 ![9](https://github.com/user-attachments/assets/3d478c62-158e-4bdc-bb01-d1ca4fa60a63)
