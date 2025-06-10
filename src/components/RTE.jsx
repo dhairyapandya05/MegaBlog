@@ -21,6 +21,7 @@ export default function RTE({name, control, label, defaultValue = ""}) {
               height: 500,
               menubar: true,
               plugins: [
+                "codesample",
                 "image",
                 "advlist",
                 "autolink",
@@ -43,7 +44,7 @@ export default function RTE({name, control, label, defaultValue = ""}) {
                 "anchor",
               ],
               toolbar:
-                "undo redo | blocks | image | bold italic forecolor | alignleft aligncenter bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent |removeformat | help",
+                "undo redo | blocks | image | bold italic forecolor | alignleft aligncenter bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent |removeformat |codesample | help",
               content_style:
                 "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
             }}
